@@ -1,3 +1,4 @@
+from pathlib import Path
 from crewai import Agent, Task, Crew, Process, LLM
 import yaml
 
@@ -38,9 +39,19 @@ def crewConfig(agents, tasks):
     return crew
 
 def crewInit():
-    tutor = agentInit("Crew/agents/tutor_config.yaml")
-    domain_expert = agentInit("Crew/agents/domain_expert_config.yaml")
-    validator = agentInit("Crew/agents/validator_config.yaml")
-    analyzer = agentInit("Crew/agents/analyzer_config.yaml")
+    current_dir = Path(__file__).resolve().parent
+
+    tutor = agentInit(current_dir / "agents" / "tutor_config.yaml")
+    domain_expert = agentInit(current_dir / "agents" / "expert_config.yaml")
+    validator = agentInit(current_dir / "agents" / "validator_config.yaml")
+    analyzer = agentInit(current_dir / "agents" / "analyzer_config.yaml")
+
+    read_question = taskInit(current_dir / "tasks" / "read_question.yaml", context=[], agent=analyzer)
+    expert_reply = taskInit(current_dir / "tasks" / "expert_reply.yaml", context=[read_question], agent=domain_expert)
+    tutor_reply = taskInit(current_dir / "tasks" / "tutor_reply.yaml", context=[expert_reply], agent=tutor)
+    validate_reply = taskInit(current_dir / "tasks" / "validate.yaml", context=[expert_reply, tutor_reply], agent=validator)
+
     agents = [tutor, domain_expert, validator, analyzer]
-    return crewConfig(agents=agents, tasks=[])
+    tasks = [read_question, expert_reply, tutor_reply, validate_reply]
+
+    return crewConfig(agents=agents, tasks=tasks)

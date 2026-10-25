@@ -1,0 +1,7 @@
+description: > 
+  Leia os bullet points da lista recebida e elabore uma explicação técnica precisa para responder cada um deles, 
+  utilizando blocos de código em Java como base para a sua explicação.
+expected_output: >
+  Um relatório estruturado em Markdown. Para cada dúvida recebida, crie um cabeçalho (###) com a pergunta original.
+  Abaixo de cada cabeçalho, insira estritamente um parágrafo objetivo de explicação técnica, seguido imediatamente
+  por um bloco de código formatado em Java (```java) com o exemplo.

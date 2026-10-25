@@ -1,0 +1,7 @@
+description: >
+  Avalie a explicação didática e compare com a explicação técnica.
+  Corrija inconsistências técnicas e informações deduzidas incorretamente, mas mantendo o tom didático.
+expected_output: >
+  O documento final formatado estritamente em Markdown, mantendo os cabeçalhos, os blocos de código intactos
+  e as explicações limitadas a um parágrafo. Se a análise concluir que não há inconsistências técnicas, retorne
+  o texto exato recebido da etapa anterior, sem adicionar nenhum comentário de revisão, metadado ou alteração de estilo.

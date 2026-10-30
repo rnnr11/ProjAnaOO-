@@ -406,7 +406,3 @@ docker compose down
 ```
 
 O modelo é armazenado persistentemente no volume `ollama_data`, portanto não precisa ser baixado novamente a cada execução.
-
-## Licença
-
-Defina aqui a licença utilizada pelo projeto, caso exista.

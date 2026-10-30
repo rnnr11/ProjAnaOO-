@@ -1,0 +1,50 @@
+
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama-local
+    restart: "no"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - isolated
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 8g
+    cpus: 4
+    pids_limit: 256
+
+  crewai:
+    build:
+      context: .
+    container_name: crewai-local
+    restart: "no"
+    depends_on:
+      - ollama
+    networks:
+      - isolated
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 128
+
+networks:
+  isolated:
+    driver: bridge
+    internal: true
+
+volumes:
+  ollama_data:
+    external: true
+    name: ollama_data

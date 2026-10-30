@@ -13,7 +13,7 @@ def run_crew(crew, question: str) -> str:
 
 def main():
     crew = crewInit()
-    print(run_crew(crew, "Olá")) # trocar "Olá" para a pergunta desejada
+    print(run_crew(crew, "Qual a diferença entre uma classe abstrata e uma interface em Java?")) # trocar "Olá" para a pergunta desejada
     
 
 if __name__ == "__main__":

@@ -3,8 +3,10 @@ from crewai import Agent, Task, Crew, Process, LLM
 import yaml
 
 llm = llm = LLM(
-    model='ollama/qwen2.5:7b',
-    base_url='http://localhost:11434',
+    model='qwen2.5:7b',
+    base_url='http://ollama:11434/v1',
+    api_key= 'ollama',
+    custom_openai=True,
     temperature=0.5,
     timeout=300
     )

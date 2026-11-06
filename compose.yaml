@@ -8,6 +8,7 @@ services:
       - ollama_data:/root/.ollama
     networks:
       - isolated
+      - ollama_download
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=256m
@@ -43,6 +44,8 @@ networks:
   isolated:
     driver: bridge
     internal: true
+  ollama_download:
+    driver: bridge
 
 volumes:
   ollama_data:

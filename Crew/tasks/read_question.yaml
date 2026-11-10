@@ -1,8 +1,7 @@
 description: "Leia e analise as principais dúvidas do usuário a serem solucionadas a partir da pergunta: {question}"
 expected_output: >
   Diagnóstico conciso das dúvidas em Markdown com bullet points que precisam ser respondidos. 
-  Faça isso, seguindo as seguintes diretrizes: se a pergunta do usuário for complexa ou contiver múltiplas demandas,siga este formato:
-  - [extraia a dúvida mais urgente do aluno em forma de pergunta]
-  - [extraia a pergunta de fundo ou o conceito mais amplo a ser ensinado]. 
-  Se a pergunta for simples e direta, retorne apenas um bullet point. 
+  Faça isso, seguindo as seguintes diretrizes: se a pergunta do usuário for complexa ou contiver múltiplas demandas,siga este formato: 
+  - [extraia a brecha mais crítica no conhecimento do aluno em relação à pergunta de fundo].
+  - [extraia a pergunta de fundo que o aluno fez, o contexto geral da pergunta].
   Em nenhuma hipótese invente, deduza ou adicione dúvidas que não estejam explicitamente presentes no texto original.

@@ -6,4 +6,4 @@ description: >
 expected_output: >
   O documento final formatado estritamente em Markdown, mantendo os cabeçalhos, os blocos de código intactos
   e as explicações limitadas a um parágrafo. Se a análise concluir que não há inconsistências técnicas, retorne
-  o texto exato recebido da etapa anterior, sem adicionar nenhum comentário de revisão, metadado ou alteração de estilo.
+  o texto exato recebido de tutor_reply, sem adicionar nenhum comentário de revisão, metadado ou alteração de estilo.

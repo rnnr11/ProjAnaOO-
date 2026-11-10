@@ -207,7 +207,7 @@ Esse comando:
 
 A opção `--rm` remove o container da aplicação após sua execução, sem excluir a imagem ou o volume persistente do Ollama.
 
-## 8. Alterar a pergunta enviada aos agentes
+## 8. Alterar a pergunta enviada aos agentes (esse tópico vai mudar quando criarmos a interface)
 
 A pergunta inicial é definida em `main.py`.
 

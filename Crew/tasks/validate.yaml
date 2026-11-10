@@ -1,6 +1,8 @@
 description: >
   Avalie a explicação didática e compare com a explicação técnica.
-  Corrija inconsistências técnicas e informações deduzidas incorretamente, mas mantendo o tom didático.
+  Corrija inconsistências conceituais e ideias deduzidas que não estão de acordo com a realidade técnica,
+  mas mantendo ao máximo a explicação didática recebida. 
+  O objetivo é garantir que a explicação didática seja tecnicamente precisa, sem perder sua clareza e acessibilidade.
 expected_output: >
   O documento final formatado estritamente em Markdown, mantendo os cabeçalhos, os blocos de código intactos
   e as explicações limitadas a um parágrafo. Se a análise concluir que não há inconsistências técnicas, retorne

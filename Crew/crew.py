@@ -8,7 +8,7 @@ llm = llm = LLM(
     api_key= 'ollama',
     custom_openai=True,
     temperature=0.5,
-    timeout=300
+    timeout=500
     )
 
 # yaml
@@ -51,7 +51,7 @@ def crewInit():
     read_question = taskInit(current_dir / "tasks" / "read_question.yaml", context=[], agent=analyzer)
     expert_reply = taskInit(current_dir / "tasks" / "expert_reply.yaml", context=[read_question], agent=domain_expert)
     tutor_reply = taskInit(current_dir / "tasks" / "tutor_reply.yaml", context=[expert_reply], agent=tutor)
-    validate_reply = taskInit(current_dir / "tasks" / "validate.yaml", context=[expert_reply, tutor_reply], agent=validator)
+    validate_reply = taskInit(current_dir / "tasks" / "validate.yaml", context=[tutor_reply], agent=validator)
 
     agents = [tutor, domain_expert, validator, analyzer]
     tasks = [read_question, expert_reply, tutor_reply, validate_reply]

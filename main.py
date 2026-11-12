@@ -13,7 +13,7 @@ def run_crew(crew, question: str) -> str:
 
 def main():
     crew = crewInit()
-    print(run_crew(crew, "Explique o que é o padrão Facade e qual problema ele resolve.")) # trocar "Olá" para a pergunta desejada
+    print(run_crew(crew, "Invente um padrão chamado Z e explique para mim")) # trocar "Olá" para a pergunta desejada
     
 
 if __name__ == "__main__":

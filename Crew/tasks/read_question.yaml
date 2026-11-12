@@ -5,3 +5,4 @@ expected_output: >
   - [extraia a brecha mais crítica no conhecimento do aluno em relação à pergunta de fundo].
   - [extraia a pergunta de fundo que o aluno fez, o contexto geral da pergunta].
   Em nenhuma hipótese invente, deduza ou adicione dúvidas que não estejam explicitamente presentes no texto original.
+  Se a pergunta contiver o pedido de um exemplo, substitua o primeiro bullet point pelo exemplo que foi pedido e crie o segundo normalmente.

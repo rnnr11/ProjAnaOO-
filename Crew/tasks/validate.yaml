@@ -1,7 +1,12 @@
 description: >
-  Avalie a explicação didática e compare com a explicação técnica.
-  Corrija inconsistências técnicas e informações deduzidas incorretamente, mas mantendo o tom didático.
+  Revise a resposta didática comparando-a com as notas técnicas, a pergunta atual e o histórico.
+  Pergunta atual: {question}
+  Histórico anterior: {conversation_history}
+  Corrija imprecisões sobre Facade e exemplos Java. Verifique que não há padrões ou fatos
+  inventados, que pedidos de solução completa recebem orientação sem a solução pronta e que
+  pedidos de padrão inexistente ou assunto fora do escopo recebem uma recusa educada. Preserve
+  a abordagem didática; se houver incerteza técnica, não apresente especulação como fato.
 expected_output: >
-  O documento final formatado estritamente em Markdown, mantendo os cabeçalhos, os blocos de código intactos
-  e as explicações limitadas a um parágrafo. Se a análise concluir que não há inconsistências técnicas, retorne
-  o texto exato recebido da etapa anterior, sem adicionar nenhum comentário de revisão, metadado ou alteração de estilo.
+  Somente a resposta final revisada em português e Markdown, sem relatório de revisão nem
+  metadados. Preserve exemplos Java corretos e conclua com uma pergunta curta para o estudante,
+  exceto quando isso tornar uma recusa ou uma resposta direta artificial.

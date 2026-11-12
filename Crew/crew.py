@@ -1,15 +1,17 @@
+import os
 from pathlib import Path
+
 from crewai import Agent, Task, Crew, Process, LLM
 import yaml
 
-llm = llm = LLM(
+llm = LLM(
     model='qwen2.5:7b',
-    base_url='http://ollama:11434/v1',
-    api_key= 'ollama',
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434/v1"),
+    api_key='ollama',
     custom_openai=True,
     temperature=0.5,
-    timeout=300
-    )
+    timeout=int(os.getenv("OLLAMA_REQUEST_TIMEOUT", "600")),
+)
 
 # yaml
 def extract_yaml(path):
@@ -19,7 +21,14 @@ def extract_yaml(path):
 
 # Agent
 def agentConfig(role, goal, backstory):
-    agent = Agent(role=role, goal=goal, backstory=backstory, verbose=True, allow_delegation=False, llm=llm)
+    agent = Agent(
+        role=role,
+        goal=goal,
+        backstory=backstory,
+        verbose=False,
+        allow_delegation=False,
+        llm=llm,
+    )
     return agent
 
 def agentInit(path):
@@ -48,10 +57,26 @@ def crewInit():
     validator = agentInit(current_dir / "agents" / "validator_config.yaml")
     analyzer = agentInit(current_dir / "agents" / "analyzer_config.yaml")
 
-    read_question = taskInit(current_dir / "tasks" / "read_question.yaml", context=[], agent=analyzer)
-    expert_reply = taskInit(current_dir / "tasks" / "expert_reply.yaml", context=[read_question], agent=domain_expert)
-    tutor_reply = taskInit(current_dir / "tasks" / "tutor_reply.yaml", context=[expert_reply], agent=tutor)
-    validate_reply = taskInit(current_dir / "tasks" / "validate.yaml", context=[expert_reply, tutor_reply], agent=validator)
+    read_question = taskInit(
+        current_dir / "tasks" / "read_question.yaml",
+        context=[],
+        agent=analyzer,
+    )
+    expert_reply = taskInit(
+        current_dir / "tasks" / "expert_reply.yaml",
+        context=[read_question],
+        agent=domain_expert,
+    )
+    tutor_reply = taskInit(
+        current_dir / "tasks" / "tutor_reply.yaml",
+        context=[read_question, expert_reply],
+        agent=tutor,
+    )
+    validate_reply = taskInit(
+        current_dir / "tasks" / "validate.yaml",
+        context=[read_question, expert_reply, tutor_reply],
+        agent=validator,
+    )
 
     agents = [tutor, domain_expert, validator, analyzer]
     tasks = [read_question, expert_reply, tutor_reply, validate_reply]

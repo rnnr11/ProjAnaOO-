@@ -1,6 +1,13 @@
-description: "Leia e analise as principais dúvidas do usuário a serem solucionadas a partir da pergunta: {question}"
+description: >
+  Analise a pergunta atual do estudante sobre Facade: {question}
+  Histórico anterior da conversa: {conversation_history}
+  Identifique a etapa pedagógica adequada: dúvida conceitual, pedido de exemplo, pedido de
+  seleção/uso, tentativa do estudante, solicitação de solução pronta ou assunto fora do escopo.
+  Registre somente dúvidas e equívocos sustentados pela pergunta e pelo histórico. Não responda
+  pelo estudante nem invente detalhes. Este diagnóstico é interno e será usado pelas próximas
+  tarefas para preparar uma única resposta coerente.
 expected_output: >
-  Diagnóstico conciso das dúvidas em Markdown com até dois bullet points que precisam ser respondidos. 
-  Faça isso, seguindo as seguintes diretrizes: se a pergunta do usuário for complexa ou contiver múltiplas demandas,
-  extraia e priorize as 2 dúvidas mais críticas. Se a pergunta for simples e direta, retorne apenas um bullet point. 
-  Em nenhuma hipótese invente, deduza ou adicione dúvidas que não estejam explicitamente presentes no texto original.
+  Diagnóstico interno conciso em Markdown: etapa da aprendizagem, dúvida ou tentativa
+  explicitamente apresentada e a próxima ação pedagógica recomendada. Quando a pergunta estiver
+  fora do escopo Facade ou pedir conteúdo inventado/solução pronta, indique a recusa orientada
+  correspondente sem fabricar uma resposta técnica.

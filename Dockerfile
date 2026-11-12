@@ -12,8 +12,9 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=10001:10001 main.py .
+COPY --chown=10001:10001 agente/ ./agente/
 COPY --chown=10001:10001 Crew/ ./Crew/
 
 USER 10001:10001
 
-CMD ["python", "-B", "main.py"]
+ENTRYPOINT ["python", "-B", "-m", "agente"]

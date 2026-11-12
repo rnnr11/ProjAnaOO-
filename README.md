@@ -19,26 +19,36 @@ Toda a aplicação é executada em containers Docker, mantendo o ambiente isolad
 ProjAnaOO/
 │
 ├── main.py
+├── agente/
+│   ├── __init__.py
+│   ├── __main__.py
+│   └── cli.py
+├── tests/
+│   ├── test_cli.py
+│   └── test_prompts.py
 ├── Dockerfile
 ├── compose.yaml
 ├── requirements.txt
-├── .dockerignore
 │
 └── Crew/
     ├── __init__.py
     ├── crew.py
     │
     ├── agents/
-    │   ├── tutor.yaml
-    │   ├── domain_expert.yaml
-    │   ├── validator.yaml
-    │   └── analyzer.yaml
+    │   ├── tutor_config.yaml
+    │   ├── expert_config.yaml
+    │   ├── validator_config.yaml
+    │   └── analyzer_config.yaml
     │
     └── tasks/
-        ├── ...
+        ├── read_question.yaml
+        ├── expert_reply.yaml
+        ├── tutor_reply.yaml
+        └── validate.yaml
 ```
 
-- `main.py`: ponto de entrada da aplicação.
+- `agente/`: CLI com modo de pergunta única e chat interativo com histórico local.
+- `main.py`: ponto de entrada compatível com a CLI.
 - `Crew/crew.py`: inicialização do CrewAI, configuração do LLM e montagem dos agentes e tarefas.
 - `Crew/agents/`: arquivos YAML com as configurações dos agentes.
 - `Crew/tasks/`: arquivos YAML com as definições das tarefas.
@@ -149,22 +159,29 @@ A configuração esperada é:
 
 ```python
 from crewai import LLM
+import os
 
 llm = LLM(
     model="qwen2.5:7b",
-    base_url="http://ollama:11434/v1",
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
     api_key="ollama",
     custom_openai=True,
     temperature=0.5,
-    timeout=300,
+    timeout=int(os.getenv("OLLAMA_REQUEST_TIMEOUT", "600")),
 )
 ```
 
-**Atenção:** utilize `ollama` como hostname, e não `localhost`.
+**No Docker Compose:** utilize `ollama` como hostname. Para a execução direta no host, use
+`localhost` (padrão) ou configure `OLLAMA_BASE_URL`.
 
-Como os serviços estão em containers diferentes, o nome do serviço definido no Docker Compose é utilizado para a comunicação entre eles.
+No Docker Compose, `OLLAMA_BASE_URL` aponta para `http://ollama:11434/v1`, pois os serviços
+estão em containers diferentes. Ao executar `python -m agente` diretamente no host, o padrão
+é `http://localhost:11434/v1`; nesse caso, o Ollama e o modelo devem estar disponíveis na
+máquina local.
 
 O parâmetro `custom_openai=True` permite utilizar a integração OpenAI personalizada do CrewAI com o endpoint compatível do Ollama.
+O timeout padrão de cada chamada é de 600 segundos. Configure `OLLAMA_REQUEST_TIMEOUT` no
+arquivo `.env` para ajustar o limite, especialmente em máquinas com inferência mais lenta.
 
 ## 6. Construir a aplicação CrewAI
 
@@ -190,57 +207,53 @@ docker compose build --no-cache crewai
 
 ## 7. Executar o projeto
 
-Com os serviços configurados, execute:
+Para executar diretamente no host, instale as dependências:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Inicie o Ollama no host com o modelo configurado. O endpoint padrão é
+`http://localhost:11434/v1` e pode ser sobrescrito pela variável `OLLAMA_BASE_URL`.
+
+O contrato de chamada única é:
+
+```powershell
+python -m agente "Explique o padrão Facade com um exemplo pequeno em Java."
+```
+
+Também é possível executar a mesma CLI usando Docker Compose:
+
+```powershell
+docker compose run --rm crewai "Explique o padrão Facade com um exemplo pequeno em Java."
+```
+
+Para conversar em vários turnos, sem argumento:
 
 ```powershell
 docker compose run --rm crewai
 ```
 
-Esse comando:
+Ou, diretamente no terminal:
 
-1. Cria um container temporário para a aplicação.
-2. Mantém o Ollama em execução.
-3. Executa o arquivo `main.py`.
-4. Inicializa os agentes e suas respectivas tarefas.
-5. Exibe os resultados no terminal.
-6. Remove o container temporário ao finalizar.
+```powershell
+python -m agente
+```
+
+Digite `sair` para encerrar o chat. O histórico é mantido durante essa sessão interativa e
+enviado aos agentes a cada turno; uma execução de pergunta única começa uma conversa nova.
+O comando Docker usa a imagem já construída e remove o container temporário ao finalizar,
+sem excluir a imagem ou o volume persistente do Ollama.
 
 A opção `--rm` remove o container da aplicação após sua execução, sem excluir a imagem ou o volume persistente do Ollama.
 
-## 8. Alterar a pergunta enviada aos agentes
-
-A pergunta inicial é definida em `main.py`.
-
-Exemplo:
-
-```python
-from Crew.crew import crewInit
-
-def run_crew(crew, question: str) -> str:
-    reply = crew.kickoff(inputs={"question": question})
-    return reply.raw
-
-def main():
-    crew = crewInit()
-    print(run_crew(
-        crew,
-        "Qual a diferença entre uma classe abstrata e uma interface em Java?"
-    ))
-
-if __name__ == "__main__":
-    main()
-```
-
-Altere o texto passado para `run_crew()` para enviar uma nova pergunta aos agentes.
-
-Após modificar o código, execute novamente:
+Para executar os testes da CLI e da memória local:
 
 ```powershell
-docker compose build crewai
-docker compose run --rm crewai
+python -m unittest discover -s tests
 ```
 
-## 9. Encerrar os serviços
+## 8. Encerrar os serviços
 
 Para encerrar os containers:
 
@@ -345,7 +358,20 @@ Caso o modelo não esteja disponível:
 docker compose exec ollama ollama pull qwen2.5:7b
 ```
 
-### 3. Alterações no código não aparecem
+### 3. Timeout ao gerar uma resposta
+
+O Ollama pode demorar para carregar o modelo ou gerar respostas quando há poucos recursos
+disponíveis. O limite padrão por chamada é de 600 segundos; para aumentá-lo, defina
+`OLLAMA_REQUEST_TIMEOUT=900` no arquivo `.env` e execute novamente. O Compose aguarda o Ollama
+estar pronto antes de iniciar a aplicação. Se o timeout persistir, verifique os logs e o uso
+de recursos:
+
+```powershell
+docker compose logs ollama
+docker stats
+```
+
+### 4. Alterações no código não aparecem
 
 Reconstrua a imagem da aplicação:
 
@@ -399,7 +425,7 @@ docker compose up -d ollama
 docker compose build crewai
 
 # Executar o CrewAI
-docker compose run --rm crewai
+docker compose run --rm crewai "Explique o padrão Facade."
 
 # Encerrar os serviços
 docker compose down

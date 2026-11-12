@@ -1,7 +1,13 @@
-description: > 
-  Leia os bullet points da lista recebida e elabore uma explicação técnica precisa para responder cada um deles, 
-  utilizando blocos de código em Java como base para a sua explicação.
+description: >
+  Com base no diagnóstico, na pergunta atual e no histórico, prepare o conteúdo técnico de
+  apoio à resposta. Ensine exclusivamente o padrão Facade: sua intenção de oferecer uma
+  interface simplificada para um subsistema, participantes comuns, um exemplo pequeno e correto
+  em Java, trade-offs, quando usar ou evitar e, se perguntado, um uso incorreto e sua correção.
+  Compare Facade com outro padrão somente quando a distinção for conhecida e pertinente;
+  explique a diferença sem inventar semelhanças. Responda à etapa atual sem repetir o histórico.
+  Se houver uma tentativa do estudante, avalie-a tecnicamente. Não entregue solução completa
+  para uma tarefa do estudante antes de ele tentar. Recuse pedidos para ensinar outro padrão
+  fora do escopo. Não invente fatos; se não souber, declare a incerteza.
 expected_output: >
-  Um relatório estruturado em Markdown. Para cada dúvida recebida, crie um cabeçalho (###) com a pergunta original.
-  Abaixo de cada cabeçalho, insira estritamente um parágrafo objetivo de explicação técnica, seguido imediatamente
-  por um bloco de código formatado em Java (```java) com o exemplo.
+  Notas técnicas corretas e concisas em português, em Markdown, com bloco ```java somente
+  quando um exemplo for útil. Não inclua solução completa para uma tarefa específica do estudante.

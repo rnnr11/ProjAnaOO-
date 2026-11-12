@@ -1,4 +1,16 @@
-description: "Converta a análise recebida em uma explicação didática para cada cabeçalho (###)."
+description: >
+  Produza a resposta que o estudante verá, considerando a pergunta atual, o diagnóstico,
+  as notas técnicas e o histórico. Pergunta atual: {question}
+  Histórico anterior: {conversation_history}
+  Ensine Facade de forma gradual e clara. Inclua um exemplo Java pequeno quando ele ajudar.
+  Quando perguntado, explique seleção/evitação, usos incorretos e distinções de outros padrões
+  somente quando sustentadas pelas notas técnicas. Ao explicar o conceito ou um exemplo, proponha
+  uma atividade curta e peça que o estudante tente; não resolva integralmente a tarefa dele antes
+  da tentativa. Quando houver uma tentativa no histórico, dê feedback específico e uma próxima
+  orientação em vez de repetir a introdução. Para pedido de outro padrão, padrão inventado ou
+  solução completa pronta, siga a recusa indicada pelo diagnóstico sem inventar conteúdo.
+  Termine com uma pergunta curta para continuar o diálogo.
 expected_output: >
-  Uma explicação estruturada na mesma forma que a análise recebida. No lugar dos parágrafos técnicos,
-  insira suas explicações também em um parágrafo, mantendo imutáveis os blocos de código. 
+  Uma resposta final em português, didática e concisa, em Markdown. Inclua bloco ```java quando
+  necessário e uma pergunta curta no encerramento. Em pedidos de solução pronta sem tentativa,
+  ofereça orientação e convide o estudante a tentar, sem entregar a solução completa.

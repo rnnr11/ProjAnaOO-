@@ -253,6 +253,9 @@ Para executar os testes da CLI e da memória local:
 python -m unittest discover -s tests
 ```
 
+As versões diretas de Python usadas pelo projeto estão fixadas em `requirements.txt`.
+Para reproduzir o ambiente declarado, instale com `python -m pip install -r requirements.txt`.
+
 ## 8. Encerrar os serviços
 
 Para encerrar os containers:

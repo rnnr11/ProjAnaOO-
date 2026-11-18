@@ -30,14 +30,14 @@ class FlowConfig(Flow[FlowState]):
 
         prompt = f"""
             Você receberá uma mensagem e deverá classificá-la em uma das quatro categorias: CONVERSA, SOLUCAO, INVENCAO ou PERGUNTA.
-            CONVERSA: Saudações, perguntas não relacionadas ao padrão facade, bate-papo. 
-            (Ex: "Olá, como você está?", "O que é o padrão singleton?", "Imite uma galinha")
+            CONVERSA: Saudações, perguntas não relacionadas ao padrão facade e à orientação a objetos, bate-papo. 
+            (Ex: "Olá, como você está?", "Imite uma galinha")
             SOLUCAO: Pedido de solução pronta para um problema do aluno, respostas de serviço. 
-            (Ex: "Crie uma implementação do padrão facade para mim", "Me dê a resposta do exercício 3", "Me dê um exemplo do padrão facade para um sistema de banco de dados")
+            (Ex: "Crie uma implementação do padrão facade para mim", "Me dê a resposta do exercício 3", "Implemente um facade para um sistema de banco de dados")
             INVENCAO: Pedido para inventar conceitos técnicos que não existem. 
             (Ex: "Invente um novo padrão de projeto", "Crie uma nova linguagem de programação")
-            PERGUNTA: Perguntas técnicas sobre o padrão facade. 
-            (Ex: "Como o padrão facade ajuda a reduzir a complexidade do sistema?", "Qual é a diferença entre o padrão facade e o padrão adapter?", "Me dê um exemplo do padrão Facade")
+            PERGUNTA: Perguntas técnicas sobre o padrão facade ou orientação a objetos. 
+            (Ex: "Como o padrão facade ajuda a reduzir complexidade do sistema?", "O que é polimorfismo?", Quais são os outros pilares da orientação a objetos?", "Qual é a diferença entre o padrão facade e o padrão adapter?", "Me dê um exemplo qualquer do padrão Facade")
 
             Leia a mensagem e responda APENAS com UMA das palavras:
             CONVERSA, SOLUCAO, INVENCAO ou PERGUNTA.
@@ -63,7 +63,9 @@ class FlowConfig(Flow[FlowState]):
 
     @listen("CONVERSA")
     def conversation(self):
-        self.state.output_text = "Converse com o usuário" #placeholder
+        from Crew.crews import talking_crew_init
+        crew = talking_crew_init()
+        self.state.output_text = run_crew(crew, self.state.input_text)
 
     @listen("SOLUCAO")
     def deny_solution(self):

@@ -2,22 +2,6 @@ from pathlib import Path
 from crewai import Agent, Task, Crew, Process, LLM
 import yaml
 
-def agents_init():
-    current_dir = Path(__file__).resolve().parent
-
-    tutor = agent_init(current_dir / "agents" / "tutor_config.yaml")
-    domain_expert = agent_init(current_dir / "agents" / "expert_config.yaml")
-    validator = agent_init(current_dir / "agents" / "validator_config.yaml")
-    analyzer = agent_init(current_dir / "agents" / "analyzer_config.yaml")
-
-    return {
-            "tutor": tutor, 
-            "domain_expert": domain_expert,
-            "validator": validator,
-            "analyzer": analyzer
-    }
-
-agents = agents_init()
 current_dir = Path(__file__).resolve().parent
 
 llm = LLM(
@@ -58,15 +42,28 @@ def crew_config(agents, tasks):
     crew = Crew(agents=agents, tasks=tasks, process=Process.sequential)
     return crew
 
-def talking_crew_init(): # por fazer
-    return crew_config(agents=list(agents.values()), tasks=[])
+def talking_crew_init():
+    chatty = agent_init(current_dir / "agents" / "talking_crew" / "chatty_config.yaml")
+    agents = [chatty]
+
+    generic_reply = task_init(current_dir / "tasks" / "talking_crew" / "generic_reply.yaml", context=[], agent=chatty)
+    tasks = [generic_reply]
+
+    return crew_config(agents=agents, tasks=tasks)
 
 def expert_crew_init():
-    read_question = task_init(current_dir / "tasks" / "expert_crew" / "read_question.yaml", context=[], agent=agents["analyzer"])
-    expert_reply = task_init(current_dir / "tasks" / "expert_crew" / "expert_reply.yaml", context=[read_question], agent=agents["domain_expert"])
-    tutor_reply = task_init(current_dir / "tasks" / "expert_crew" / "tutor_reply.yaml", context=[expert_reply], agent=agents["tutor"])
-    validate_reply = task_init(current_dir / "tasks" / "expert_crew" / "validate.yaml", context=[tutor_reply], agent=agents["validator"])
+    tutor = agent_init(current_dir / "agents" / "expert_crew" / "tutor_config.yaml")
+    domain_expert = agent_init(current_dir / "agents" / "expert_crew" / "domain_expert_config.yaml")
+    validator = agent_init(current_dir / "agents" / "expert_crew" / "validator_config.yaml")
+    analyzer = agent_init(current_dir / "agents" / "expert_crew" / "analyzer_config.yaml")
+
+    agents = [tutor, domain_expert, validator, analyzer]
+
+    read_question = task_init(current_dir / "tasks" / "expert_crew" / "read_question.yaml", context=[], agent=analyzer)
+    expert_reply = task_init(current_dir / "tasks" / "expert_crew" / "expert_reply.yaml", context=[read_question], agent=domain_expert)
+    tutor_reply = task_init(current_dir / "tasks" / "expert_crew" / "tutor_reply.yaml", context=[expert_reply], agent=tutor)
+    validate_reply = task_init(current_dir / "tasks" / "expert_crew" / "validate.yaml", context=[tutor_reply], agent=validator)
 
     tasks = [read_question, expert_reply, tutor_reply, validate_reply]
 
-    return crew_config(agents=list(agents.values()), tasks=tasks)
+    return crew_config(agents=agents, tasks=tasks)

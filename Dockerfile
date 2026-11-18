@@ -13,6 +13,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=10001:10001 main.py .
 COPY --chown=10001:10001 Crew/ ./Crew/
+COPY --chown=10001:10001 Flow/ ./Flow/
 
 USER 10001:10001
 

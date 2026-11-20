@@ -1,5 +1,6 @@
 description: >
-  Leia a mensagem do aluno: '{question}'. Responda de forma curta (poucas palavras) e cordial na primeira frase e,
+  Use esse histórico como base: '{history}'
+  Leia a mensagem do aluno: '{question}'. Responda a mensagem ou pergunta de forma curta (poucas palavras) e cordial na primeira frase e,
   na segunda frase, conduza a conversa de volta ao padrão Facade ou Orientação a Objetos, sem entrar em explicações técnicas.
   Exemplos:
   Aluno: Oi, tudo bem? -> Resposta: Eu estou bem! O que quer aprender sobre facade?
@@ -9,3 +10,4 @@ description: >
 expected_output: >
   Apenas uma resposta educada de no máximo duas frases 
   (a primeira respondendo brevemente ao aluno e a segunda redirecionando para Facade/OO), sem explicações técnicas ou código.
+  A resposta não deve repetir os textos "Estudante:" ou "Tutor:".

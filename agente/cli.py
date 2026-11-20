@@ -46,14 +46,15 @@ class Conversation:
             for question, answer in self._turns
         )
 
-
 def run_flow(question: str, conversation_history: str) -> str:
     from Flow.flow_config import FlowConfig
 
     flow = FlowConfig()
     try:
         flow.state.input_text = question
-        result = flow.kickoff()
+        flow.state.history_text = conversation_history
+        flow.kickoff()
+        answer = flow.state.output_text
     except (
         ConnectionError,
         TimeoutError,
@@ -63,7 +64,6 @@ def run_flow(question: str, conversation_history: str) -> str:
             "Verifique se o Ollama está em execução e se o modelo configurado está disponível."
         ) from exc
 
-    answer = getattr(result, "raw", None)
     if not isinstance(answer, str) or not answer.strip():
         raise UnexpectedModelOutputError(
             "A execução terminou sem produzir uma resposta textual."

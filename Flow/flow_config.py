@@ -11,12 +11,13 @@ choice_llm = LLM(
     temperature=0.0,
 )
 
-def run_crew(crew, question: str) -> str:
-    reply = crew.kickoff(inputs={"question": question})
+def run_crew(crew, question: str, history: str) -> str:
+    reply = crew.kickoff(inputs={"question": question, "history": history})
     return reply.raw
 
 class FlowState(BaseModel):
      input_text: str = ""
+     history_text: str = ""
      output_text: str = ""
 
 class FlowConfig(Flow[FlowState]):
@@ -30,7 +31,7 @@ class FlowConfig(Flow[FlowState]):
 
         prompt = f"""
             Você receberá uma mensagem e deverá classificá-la em uma das quatro categorias: CONVERSA, SOLUCAO, INVENCAO ou PERGUNTA.
-            CONVERSA: Saudações, bate-papo, outras conversas que mencionem, mas não apresentem dúvidas sobre facade e OO. 
+            CONVERSA: Saudações, bate-papo, outras conversas que mencionem, mas não apresentem dúvidas sobre facade e OO, perguntas que não tenham a ver com o Facade ou OO. 
             (Ex: "Olá, como você está?", "Imite uma galinha", "Você gosta do padrão facade?", "Ontem estudei polimorfismo!", "Gostaria de aprender sobre facade?")
             SOLUCAO: Pedido de solução pronta para um problema do aluno, respostas de serviço. 
             (Ex: "Crie uma implementação do padrão facade para mim", "Me dê a resposta do exercício 3", "Implemente um facade para um sistema de banco de dados")
@@ -65,7 +66,7 @@ class FlowConfig(Flow[FlowState]):
     def conversation(self):
         from Crew.crews import talking_crew_init
         crew = talking_crew_init()
-        self.state.output_text = run_crew(crew, self.state.input_text)
+        self.state.output_text = run_crew(crew, self.state.input_text, self.state.history_text)
 
     @listen("SOLUCAO")
     def deny_solution(self):
@@ -79,4 +80,4 @@ class FlowConfig(Flow[FlowState]):
     def question(self):
         from Crew.crews import expert_crew_init
         crew = expert_crew_init()
-        self.state.output_text = run_crew(crew, self.state.input_text)
+        self.state.output_text = run_crew(crew, self.state.input_text, self.state.history_text)

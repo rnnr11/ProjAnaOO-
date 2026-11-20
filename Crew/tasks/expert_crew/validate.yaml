@@ -1,0 +1,9 @@
+description: >
+  Avalie a explicação didática.
+  Corrija inconsistências conceituais que não estão de acordo com a realidade técnica,
+  mas mantendo tudo que for correto do texto original recebido de tutor_reply.
+  O objetivo é garantir que a explicação didática seja tecnicamente precisa, sem perder sua clareza e acessibilidade.
+  
+expected_output: >
+  O documento final formatado estritamente em Markdown, mantendo os cabeçalhos e os blocos de código.
+  Caso a avaliação conclua que não há nenhuma inconsistência, o texto retornado deve ser o mesmo.

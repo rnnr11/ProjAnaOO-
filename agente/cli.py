@@ -47,23 +47,14 @@ class Conversation:
         )
 
 
-def run_crew(question: str, conversation_history: str) -> str:
-    from litellm.exceptions import APIConnectionError, APIError, Timeout
+def run_flow(question: str, conversation_history: str) -> str:
+    from Flow.flow_config import FlowConfig
 
-    from Crew.crew import crewInit
-
-    crew = crewInit()
+    flow = FlowConfig()
     try:
-        result = crew.kickoff(
-            inputs={
-                "question": question,
-                "conversation_history": conversation_history,
-            }
-        )
+        flow.state.input_text = question
+        result = flow.kickoff()
     except (
-        APIConnectionError,
-        APIError,
-        Timeout,
         ConnectionError,
         TimeoutError,
     ) as exc:
@@ -100,7 +91,7 @@ def main(
         help="pergunta para o tutor; sem argumento, inicia o chat interativo",
     )
     args = parser.parse_args(argv)
-    conversation = Conversation(run_crew)
+    conversation = Conversation(run_flow)
 
     if args.question is not None:
         try:

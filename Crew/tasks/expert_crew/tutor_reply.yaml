@@ -1,0 +1,4 @@
+description: "Converta a análise recebida em uma explicação didática para cada cabeçalho (###)."
+expected_output: >
+  Uma explicação estruturada na mesma forma que a análise recebida. No lugar dos parágrafos técnicos,
+  insira suas explicações também em um parágrafo, mantendo imutáveis os blocos de código. 

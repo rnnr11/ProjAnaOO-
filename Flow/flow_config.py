@@ -30,8 +30,8 @@ class FlowConfig(Flow[FlowState]):
 
         prompt = f"""
             Você receberá uma mensagem e deverá classificá-la em uma das quatro categorias: CONVERSA, SOLUCAO, INVENCAO ou PERGUNTA.
-            CONVERSA: Saudações, perguntas não relacionadas ao padrão facade e à orientação a objetos, bate-papo. 
-            (Ex: "Olá, como você está?", "Imite uma galinha")
+            CONVERSA: Saudações, bate-papo, outras conversas que mencionem, mas não apresentem dúvidas sobre facade e OO. 
+            (Ex: "Olá, como você está?", "Imite uma galinha", "Você gosta do padrão facade?", "Ontem estudei polimorfismo!", "Gostaria de aprender sobre facade?")
             SOLUCAO: Pedido de solução pronta para um problema do aluno, respostas de serviço. 
             (Ex: "Crie uma implementação do padrão facade para mim", "Me dê a resposta do exercício 3", "Implemente um facade para um sistema de banco de dados")
             INVENCAO: Pedido para inventar conceitos técnicos que não existem. 

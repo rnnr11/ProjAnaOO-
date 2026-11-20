@@ -53,7 +53,7 @@ def talking_crew_init():
 
 def expert_crew_init():
     tutor = agent_init(current_dir / "agents" / "expert_crew" / "tutor_config.yaml")
-    domain_expert = agent_init(current_dir / "agents" / "expert_crew" / "domain_expert_config.yaml")
+    domain_expert = agent_init(current_dir / "agents" / "expert_crew" / "expert_config.yaml")
     validator = agent_init(current_dir / "agents" / "expert_crew" / "validator_config.yaml")
     analyzer = agent_init(current_dir / "agents" / "expert_crew" / "analyzer_config.yaml")
 

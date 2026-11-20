@@ -10,7 +10,7 @@ def main():
 
     # Inicializa o fluxo
     my_flow = FlowConfig()
-    my_flow.state.input_text = "Olá, tudo bem? Gostaria de um exemplo do padrão facade." # Insira a pergunta aqui
+    my_flow.state.input_text = "Você gostaria de aprender sobre o padrão facade?" # Insira a pergunta aqui
     my_flow.kickoff()
     print(my_flow.state.output_text)
     

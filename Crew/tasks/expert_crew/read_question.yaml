@@ -1,4 +1,7 @@
-description: "Leia e analise as principais dúvidas do usuário a serem solucionadas a partir da pergunta: {question}"
+description: >
+  Leia e analise as principais dúvidas do usuário a serem solucionadas a partir da pergunta: {question}
+  A fim de melhorar a sua análise, use o seguinte histórico de conversas como base:
+  {history}
 expected_output: >
   Diagnóstico conciso das dúvidas em Markdown com bullet points que precisam ser respondidos. 
   Faça isso, seguindo as seguintes diretrizes: se a pergunta do usuário for complexa ou contiver múltiplas demandas,siga este formato: 

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from agente.cli import (
+from Agente.cli import (
     Conversation,
     EmptyQuestionError,
     ModelExecutionError,

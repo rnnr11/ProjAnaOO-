@@ -1,7 +1,7 @@
 import argparse
 import sys
 from collections.abc import Callable, Sequence
-from Agente.conversation import UnexpectedModelOutputError, ModelExecutionError, EmptyQuestionError, Conversation
+from agente.conversation import UnexpectedModelOutputError, ModelExecutionError, EmptyQuestionError, Conversation
 
 def run_flow(question: str, conversation_history: str) -> str:
     from Flow.flow_config import FlowConfig

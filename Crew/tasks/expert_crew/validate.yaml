@@ -7,3 +7,4 @@ description: >
 expected_output: >
   O documento final formatado estritamente em Markdown, mantendo os cabeçalhos e os blocos de código.
   Caso a avaliação conclua que não há nenhuma inconsistência, o texto retornado deve ser o mesmo.
+  Você não deve adicionar notas explicando suas razões para cada alteração. Apenas altere.

@@ -4,6 +4,6 @@ description: >
   Se o tópico for sobre um conceito teórico, como "O que é alto acoplamento?" ou "Qual a função do polimorfismo?", crie um exemplo
   curto e ilustrativo (entre 5 e 15 linhas) que demonstre o conceito. 
 expected_output: >
-  Um relatório estruturado em Markdown. Para cada dúvida recebida, crie um cabeçalho (###) com a pergunta original.
+  Um relatório estruturado em Markdown. Para cada dúvida recebida, crie um cabeçalho (###) baseado na pergunta original.
   Abaixo de cada cabeçalho, insira estritamente um parágrafo objetivo de explicação técnica, seguido imediatamente
   por um bloco de código formatado em Java (```java) com o exemplo.

@@ -1,3 +1,5 @@
+import os
+
 from click import prompt
 from crewai.flow.flow import Flow, start, router, listen
 from crewai.llm import LLM
@@ -5,10 +7,11 @@ from pydantic import BaseModel
 
 choice_llm = LLM(
     model='qwen2.5:7b',
-    base_url='http://ollama:11434/v1',
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
     api_key= 'ollama',
     custom_openai=True,
     temperature=0.0,
+    timeout=int(os.getenv("OLLAMA_REQUEST_TIMEOUT", "600")),
 )
 
 def run_crew(crew, question: str, history: str) -> str:

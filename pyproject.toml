@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "projanaoo"
+version = "0.1.0"
+description = "Tutor pedagógico local para o padrão Facade e orientação a objetos"
+requires-python = ">=3.12"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["agente*", "Crew*", "Flow*"]
+
+[tool.setuptools.package-data]
+Crew = ["agents/*/*.yaml", "tasks/*/*.yaml"]

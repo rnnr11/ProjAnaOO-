@@ -55,7 +55,7 @@ class CliTests(unittest.TestCase):
         output = []
         errors = []
 
-        with patch("agente.cli.run_crew", return_value="Resposta do tutor"):
+        with patch("agente.cli.run_flow", return_value="Resposta do tutor"):
             result = main(
                 ["Explique Facade"],
                 output_fn=output.append,
@@ -70,7 +70,7 @@ class CliTests(unittest.TestCase):
         output = []
         errors = []
 
-        with patch("agente.cli.run_crew") as runner:
+        with patch("agente.cli.run_flow") as runner:
             result = main(["   "], output_fn=output.append, error_fn=errors.append)
 
         self.assertEqual(result, 2)
@@ -88,7 +88,7 @@ class CliTests(unittest.TestCase):
             calls.append((question, history))
             return f"Resposta {len(calls)}"
 
-        with patch("agente.cli.run_crew", side_effect=runner):
+        with patch("agente.cli.run_flow", side_effect=runner):
             result = main(
                 [],
                 input_fn=lambda prompt: next(prompts),
@@ -107,7 +107,7 @@ class CliTests(unittest.TestCase):
         errors = []
 
         with patch(
-            "agente.cli.run_crew",
+            "agente.cli.run_flow",
             side_effect=ModelExecutionError("Falha no modelo local."),
         ):
             result = main(
@@ -124,7 +124,7 @@ class CliTests(unittest.TestCase):
         output = []
         errors = []
 
-        with patch("agente.cli.run_crew", return_value=""):
+        with patch("agente.cli.run_flow", return_value=""):
             result = main(
                 ["Explique Facade"],
                 output_fn=output.append,
@@ -142,7 +142,7 @@ class CliTests(unittest.TestCase):
         errors = []
         prompts = iter([" ", "O que é Facade?", "sair"])
 
-        with patch("agente.cli.run_crew", return_value="Resposta"):
+        with patch("agente.cli.run_flow", return_value="Resposta"):
             result = main(
                 [],
                 input_fn=lambda prompt: next(prompts),

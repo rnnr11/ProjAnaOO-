@@ -7,7 +7,7 @@ current_dir = Path(__file__).resolve().parent
 
 llm = LLM(
     model='qwen2.5:7b',
-    base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434/v1"),
+    base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1"),
     api_key= 'ollama',
     custom_openai=True,
     temperature=0.5,

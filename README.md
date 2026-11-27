@@ -1,408 +1,167 @@
 # ProjAnaOO
 
-Projeto Python desenvolvido com **CrewAI**, utilizando agentes de inteligência artificial para analisar perguntas, elaborar explicações técnicas e validar respostas. O modelo de linguagem é executado localmente através do **Ollama**, utilizando o Qwen 2.5 7B.
+Tutor pedagógico local sobre o padrão Facade e orientação a objetos. A aplicação usa um fluxo CrewAI para classificar perguntas, encaminhá-las aos agentes apropriados e elaborar uma resposta com um modelo servido pelo Ollama. Também pode ser executada em containers com Docker Compose.
 
-Toda a aplicação é executada em containers Docker, mantendo o ambiente isolado do sistema operacional hospedeiro.
+## Tecnologias
 
-## Tecnologias utilizadas
-
-- **Python 3.12** — linguagem principal.
-- **CrewAI** — gerenciamento e orquestração dos agentes.
-- **Ollama** — execução local do modelo de linguagem.
-- **Qwen 2.5 7B** — modelo utilizado pelos agentes.
-- **Docker** — isolamento e execução dos serviços.
-- **Docker Compose** — gerenciamento dos containers e da comunicação entre eles.
+- Python 3.12
+- CrewAI 1.15.41
+- Ollama com o modelo `qwen2.5:7b`
+- Docker e Docker Compose (opcionais para execução local)
 
 ## Estrutura do projeto
 
 ```text
-ProjAnaOO/
-│
-├── main.py
-├── Dockerfile
-├── compose.yaml
+ProjAnaOO-/
+├── src/
+│   ├── agente/                 # CLI e fluxo de conversa
+│   ├── Crew/                   # Agentes, tarefas e configuração do CrewAI
+│   └── Flow/                   # Fluxo de classificação e roteamento
+├── tests/
+├── main.py                     # Ponto de entrada alternativo
+├── pyproject.toml              # Configuração do pacote src
 ├── requirements.txt
-├── .dockerignore
-│
-└── Crew/
-    ├── __init__.py
-    ├── crew.py
-    │
-    ├── agents/
-    │   ├── tutor.yaml
-    │   ├── domain_expert.yaml
-    │   ├── validator.yaml
-    │   └── analyzer.yaml
-    │
-    └── tasks/
-        ├── ...
+├── Dockerfile
+└── compose.yaml
 ```
 
-- `main.py`: ponto de entrada da aplicação.
-- `Crew/crew.py`: inicialização do CrewAI, configuração do LLM e montagem dos agentes e tarefas.
-- `Crew/agents/`: arquivos YAML com as configurações dos agentes.
-- `Crew/tasks/`: arquivos YAML com as definições das tarefas.
-- `Dockerfile`: definição da imagem Python utilizada pela aplicação.
-- `compose.yaml`: configuração dos serviços Docker e da rede interna.
-- `requirements.txt`: dependências Python.
+Os arquivos YAML de agentes e tarefas ficam em `src/Crew/agents/` e `src/Crew/tasks/`.
 
-## Pré-requisitos
+## Execução local no Windows
 
-Antes de executar o projeto, instale:
+### Pré-requisitos
 
-1. [Docker Desktop](https://www.docker.com/products/docker-desktop/).
-2. WSL 2 habilitado, caso esteja utilizando Windows.
-3. Docker Compose disponível pelo comando `docker compose`.
+- Python 3.12
+- [Ollama](https://ollama.com/) instalado e em execução no computador
 
-Não é necessário instalar Python ou Ollama diretamente no Windows para executar a aplicação pelo Docker.
+### Preparar o ambiente Python
 
-Certifique-se de que o Docker Desktop esteja aberto e funcionando.
-
-Para verificar a instalação:
+Na raiz do repositório, crie e ative um ambiente virtual e instale as dependências e o pacote:
 
 ```powershell
-docker --version
-docker compose version
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m pip install -e .
 ```
 
-## 1. Clonar o repositório
+A instalação editável registra os pacotes que estão em `src/`, permitindo executar `python -m agente` a partir da raiz.
 
-Clone o projeto e entre na pasta:
+### Preparar o Ollama
+
+Baixe o modelo configurado e confirme que ele está disponível:
 
 ```powershell
-git clone https://github.com/rnnr11/ProjAnaOO-.git
-cd ProjAnaOO
+ollama pull qwen2.5:7b
+ollama list
 ```
 
-Caso já tenha o projeto em sua máquina, basta abrir o terminal na pasta raiz.
+O endereço padrão usado pela aplicação é `http://localhost:11434/v1`. Para usar outro endereço ou alterar o timeout, configure:
 
-## 2. Configurar o modelo Ollama
+```powershell
+$env:OLLAMA_BASE_URL = "http://localhost:11434/v1"
+$env:OLLAMA_REQUEST_TIMEOUT = "600"
+```
 
-O projeto utiliza o modelo `qwen2.5:7b`, executado no container Ollama.
+`OLLAMA_REQUEST_TIMEOUT` é informado em segundos. O valor padrão é `600`.
 
-A configuração de infraestrutura utiliza um volume Docker persistente chamado `ollama_data`, responsável por armazenar os modelos baixados.
+### Executar
 
-Crie o volume:
+Uma pergunta:
+
+```powershell
+python -m agente "Explique o padrão Facade com um exemplo pequeno em Java."
+```
+
+Chat interativo com histórico durante a sessão:
+
+```powershell
+python -m agente
+```
+
+Digite `sair` para encerrar o chat. `main.py` também pode ser usado como entrada alternativa com `python main.py`.
+
+## Execução com Docker Compose
+
+Pré-requisitos: Docker Desktop (no Windows, com WSL 2 habilitado) e Docker Compose.
+
+O Compose usa o volume externo `ollama_data` para preservar os modelos entre execuções. Crie-o uma vez:
 
 ```powershell
 docker volume create ollama_data
 ```
 
-**Importante:** o volume deve ter exatamente esse nome, pois o `compose.yaml` utiliza um volume externo chamado `ollama_data`.
-
-## 3. Construir e iniciar o Ollama
-
-Na raiz do projeto, execute:
+Inicie o Ollama, baixe o modelo no container e construa a imagem da aplicação:
 
 ```powershell
 docker compose up -d ollama
-```
-
-Esse comando inicia o serviço Ollama em segundo plano.
-
-Confira se o container está em execução:
-
-```powershell
-docker compose ps
-```
-
-## 4. Baixar o modelo
-
-Execute o comando abaixo para baixar o modelo utilizado pelo projeto:
-
-```powershell
 docker compose exec ollama ollama pull qwen2.5:7b
-```
-
-O download é necessário apenas na primeira execução ou quando o modelo ainda não estiver presente no volume.
-
-Para verificar os modelos disponíveis:
-
-```powershell
-docker compose exec ollama ollama list
-```
-
-O resultado esperado deve conter:
-
-```text
-NAME          ID              SIZE
-qwen2.5:7b    ...             4.7 GB
-```
-
-Também é possível testar o funcionamento do modelo:
-
-```powershell
-docker compose exec ollama ollama run qwen2.5:7b "Responda apenas OK"
-```
-
-A resposta esperada é:
-
-```text
-OK
-```
-
-## 5. Configuração do LLM no CrewAI
-
-No arquivo `Crew/crew.py`, o modelo deve utilizar o endpoint compatível com a API da OpenAI disponibilizado pelo Ollama.
-
-A configuração esperada é:
-
-```python
-from crewai import LLM
-
-llm = LLM(
-    model="qwen2.5:7b",
-    base_url="http://ollama:11434/v1",
-    api_key="ollama",
-    custom_openai=True,
-    temperature=0.5,
-    timeout=300,
-)
-```
-
-**Atenção:** utilize `ollama` como hostname, e não `localhost`.
-
-Como os serviços estão em containers diferentes, o nome do serviço definido no Docker Compose é utilizado para a comunicação entre eles.
-
-O parâmetro `custom_openai=True` permite utilizar a integração OpenAI personalizada do CrewAI com o endpoint compatível do Ollama.
-
-## 6. Construir a aplicação CrewAI
-
-Com o Ollama iniciado e o modelo disponível, construa a imagem da aplicação:
-
-```powershell
 docker compose build crewai
 ```
 
-Esse comando instala as dependências definidas em `requirements.txt` e copia os arquivos do projeto para a imagem.
-
-Sempre que modificar o código Python, os arquivos YAML ou as dependências, reconstrua a imagem:
+Execute uma pergunta ou inicie o chat:
 
 ```powershell
-docker compose build crewai
-```
-
-Para forçar uma reconstrução sem utilizar o cache:
-
-```powershell
-docker compose build --no-cache crewai
-```
-
-## 7. Executar o projeto
-
-Com os serviços configurados, execute:
-
-```powershell
+docker compose run --rm crewai "Explique o padrão Facade com um exemplo pequeno em Java."
 docker compose run --rm crewai
 ```
 
-Esse comando:
-
-1. Cria um container temporário para a aplicação.
-2. Mantém o Ollama em execução.
-3. Executa o arquivo `main.py`.
-4. Inicializa os agentes e suas respectivas tarefas.
-5. Exibe os resultados no terminal.
-6. Remove o container temporário ao finalizar.
-
-A opção `--rm` remove o container da aplicação após sua execução, sem excluir a imagem ou o volume persistente do Ollama.
-
-## 8. Alterar a pergunta enviada aos agentes (esse tópico vai mudar quando criarmos a interface)
-
-A pergunta inicial é definida em `main.py`.
-
-Exemplo:
-
-```python
-from Crew.crew import crewInit
-
-def run_crew(crew, question: str) -> str:
-    reply = crew.kickoff(inputs={"question": question})
-    return reply.raw
-
-def main():
-    crew = crewInit()
-    print(run_crew(
-        crew,
-        "Qual a diferença entre uma classe abstrata e uma interface em Java?"
-    ))
-
-if __name__ == "__main__":
-    main()
-```
-
-Altere o texto passado para `run_crew()` para enviar uma nova pergunta aos agentes.
-
-Após modificar o código, execute novamente:
+O serviço `crewai` usa `http://ollama:11434/v1` para se comunicar com o serviço Ollama pela rede interna do Compose. O timeout pode ser alterado em `.env` com `OLLAMA_REQUEST_TIMEOUT`, ou diretamente no ambiente do processo. Após mudar o código, os arquivos YAML ou as dependências, reconstrua a imagem:
 
 ```powershell
 docker compose build crewai
-docker compose run --rm crewai
 ```
 
-## 9. Encerrar os serviços
-
-Para encerrar os containers:
+Para parar e remover os containers e a rede do Compose:
 
 ```powershell
 docker compose down
 ```
 
-Esse comando interrompe e remove os containers e a rede criada pelo Compose.
+Esse comando preserva o volume `ollama_data`. Evite `docker compose down -v` se quiser manter os modelos baixados.
 
-**O volume `ollama_data` não é removido**, portanto os modelos baixados permanecem disponíveis nas próximas execuções.
+## Testes
 
-Não utilize `docker compose down -v` caso queira preservar os modelos.
+Com as dependências instaladas e o pacote registrado no ambiente virtual:
 
-## Arquitetura da execução
-
-A aplicação utiliza dois serviços principais:
-
-```text
-                  Docker Compose
-                        |
-              Rede Docker interna
-                 (isolated)
-                        |
-             +----------+----------+
-             |                     |
-             v                     v
-      +-------------+       +-------------+
-      |   CrewAI    | ----> |   Ollama    |
-      |             | HTTP  |             |
-      | Python 3.12 |       | Qwen 2.5 7B |
-      +-------------+       +-------------+
-                                  |
-                                  v
-                           Volume persistente
-                             ollama_data
+```powershell
+python -m unittest discover -s tests -v
 ```
-
-O container CrewAI realiza as chamadas HTTP para o serviço Ollama pela rede interna do Docker.
-
-A rede é configurada como interna (`internal: true`), evitando que os containers tenham acesso direto à rede externa através dessa rede.
-
-O modelo permanece armazenado no volume Docker, evitando downloads a cada execução.
-
-## Segurança e isolamento
-
-A configuração dos containers aplica algumas restrições:
-
-- Execução da aplicação com usuário não privilegiado.
-- Sistema de arquivos somente leitura (`read_only`).
-- Permissões Linux adicionais removidas (`cap_drop: ALL`).
-- Proteção contra elevação de privilégios (`no-new-privileges`).
-- Limites de memória e CPU.
-- Limites de processos (`pids_limit`).
-- Diretório temporário disponibilizado por `tmpfs`.
-- Comunicação entre os serviços por uma rede Docker interna.
-
-Essas medidas reduzem a superfície de ataque e limitam os recursos disponíveis aos containers.
-
-**Observação:** o isolamento Docker não equivale a uma máquina virtual ou a uma sandbox de segurança absoluta. Para executar código não confiável, são necessárias medidas adicionais de proteção.
 
 ## Solução de problemas
 
-### 1. Connection refused ao conectar com o Ollama
+### Falha ao conectar com o Ollama
 
-Erro:
+Confirme que o Ollama está em execução e que o endpoint de modelos responde:
 
-```text
-httpx.ConnectError: [Errno 111] Connection refused
+```powershell
+Invoke-RestMethod http://localhost:11434/v1/models
 ```
 
-Verifique se o container Ollama está em execução:
+Se necessário, baixe o modelo e confirme a variável de endereço:
+
+```powershell
+ollama pull qwen2.5:7b
+$env:OLLAMA_BASE_URL = "http://localhost:11434/v1"
+```
+
+Na execução com Docker, verifique os serviços e os logs:
 
 ```powershell
 docker compose ps
-```
-
-Confira os logs:
-
-```powershell
 docker compose logs ollama
 ```
 
-Teste se o modelo está disponível:
+Dentro do Compose, use o hostname `ollama`; `localhost` apontaria para o próprio container da aplicação.
+
+### Timeout durante a geração
+
+O primeiro carregamento do modelo e a geração em computadores com recursos limitados podem demorar. Aumente o timeout, por exemplo:
 
 ```powershell
-docker compose exec ollama ollama list
+$env:OLLAMA_REQUEST_TIMEOUT = "900"
 ```
 
-Teste a comunicação entre os containers:
+## Isolamento do Docker
 
-```powershell
-docker compose run --rm --entrypoint python crewai -c "import urllib.request; print(urllib.request.urlopen('http://ollama:11434/api/tags', timeout=5).read().decode())"
-```
-
-Se a requisição retornar informações dos modelos, a comunicação HTTP entre os containers está funcionando.
-
-### 2. Modelo não encontrado
-
-Caso o modelo não esteja disponível:
-
-```powershell
-docker compose exec ollama ollama pull qwen2.5:7b
-```
-
-### 3. Alterações no código não aparecem
-
-Reconstrua a imagem da aplicação:
-
-```powershell
-docker compose build crewai
-```
-
-Em seguida:
-
-```powershell
-docker compose run --rm crewai
-```
-
-### 4. Verificar os logs do Ollama
-
-```powershell
-docker compose logs -f ollama
-```
-
-Para interromper a visualização dos logs, pressione `Ctrl + C`.
-
-### 5. Volume não encontrado
-
-Se o Docker informar que o volume externo não existe, crie-o:
-
-```powershell
-docker volume create ollama_data
-```
-
-Se você já possuía um volume anterior com outro nome e deseja preservar os modelos existentes, verifique os volumes disponíveis antes de criar ou substituir qualquer volume.
-
-Liste os volumes:
-
-```powershell
-docker volume ls
-```
-
-Não remova volumes antigos sem confirmar que não contêm os modelos que deseja preservar.
-
----
-
-## Resumo dos comandos
-
-Após a configuração inicial, o fluxo normal de execução é:
-
-```powershell
-# Iniciar o Ollama
-docker compose up -d ollama
-
-# Construir a aplicação (necessário após alterações)
-docker compose build crewai
-
-# Executar o CrewAI
-docker compose run --rm crewai
-
-# Encerrar os serviços
-docker compose down
-```
-
-O modelo é armazenado persistentemente no volume `ollama_data`, portanto não precisa ser baixado novamente a cada execução.
+O Compose configura usuário não privilegiado para a aplicação, sistema de arquivos somente leitura, remoção de capabilities, limite de recursos e rede interna para a comunicação entre CrewAI e Ollama. Essas medidas reduzem a exposição, mas não equivalem a uma máquina virtual nem a uma sandbox de segurança absoluta.

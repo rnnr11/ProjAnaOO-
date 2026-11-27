@@ -22,7 +22,7 @@ def extract_yaml(path):
 
 # Agent
 def agent_config(role, goal, backstory):
-    agent = Agent(role=role, goal=goal, backstory=backstory, verbose=True, allow_delegation=False, llm=llm)
+    agent = Agent(role=role, goal=goal, backstory=backstory, verbose=False, allow_delegation=False, llm=llm)
     return agent
 
 def agent_init(path):

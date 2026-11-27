@@ -2,6 +2,7 @@ import argparse
 import sys
 from collections.abc import Callable, Sequence
 from agente.conversation import UnexpectedModelOutputError, ModelExecutionError, EmptyQuestionError, Conversation
+from contextlib import redirect_stdout, redirect_stderr
 
 def run_flow(question: str, conversation_history: str) -> str:
     from Flow.flow_config import FlowConfig
@@ -10,7 +11,8 @@ def run_flow(question: str, conversation_history: str) -> str:
     try:
         flow.state.input_text = question
         flow.state.history_text = conversation_history
-        flow.kickoff()
+        with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            flow.kickoff()
         answer = flow.state.output_text
     except (
         ConnectionError,

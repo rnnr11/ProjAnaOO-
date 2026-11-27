@@ -1,5 +1,6 @@
 import argparse
 import sys
+import io
 from collections.abc import Callable, Sequence
 from agente.conversation import UnexpectedModelOutputError, ModelExecutionError, EmptyQuestionError, Conversation
 from contextlib import redirect_stdout, redirect_stderr
